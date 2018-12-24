@@ -5,8 +5,10 @@
 # DESCRIPTION : A class representing the ship
 #############################################################
 
+from element import Element
 
-class Ship:
+
+class Ship(Element):
 
     def __init__(self, position, velocity, angle):
         """
@@ -17,8 +19,4 @@ class Ship:
         :return:
         """
 
-        self.position = position
-        self.velocity = velocity
-        self.angle = angle
-
-
+        Element.__init__(self, position, velocity, angle)

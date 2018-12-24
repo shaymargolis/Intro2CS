@@ -5,8 +5,10 @@
 # DESCRIPTION : A class representing the asteroid
 #############################################################
 
+from element import Element
 
-class Asteroid:
+
+class Asteroid(Element):
 
     def __init__(self, position, velocity, size):
         """
@@ -17,8 +19,11 @@ class Asteroid:
         :return:
         """
 
-        self.position = position
-        self.velocity = velocity
+        Element.__init__(self, position, velocity, 0)
         self.size = size
 
+    def get_size(self):
+        return self.size
 
+    def set_size(self, new_size):
+        self.size = new_size

@@ -5,8 +5,10 @@
 # DESCRIPTION : A class representing the torpedo
 #############################################################
 
+from element import Element
 
-class Torpedo:
+
+class Torpedo(Element):
 
     def __init__(self, position, velocity, angle):
         """
@@ -17,6 +19,4 @@ class Torpedo:
         :return:
         """
 
-        self.position = position
-        self.velocity = velocity
-        self.angle = angle
+        Element.__init__(self, position, velocity, angle)
