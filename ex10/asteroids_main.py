@@ -35,6 +35,8 @@ class GameRunner:
         self.__screen_min_x = Screen.SCREEN_MIN_X
         self.__screen_min_y = Screen.SCREEN_MIN_Y
 
+        self.__score = 0
+
         random_pos = self._random_position()
         self.__ship = Ship(random_pos, velocity, 0,SHIP_LIFE)
         self.__draw_ship()
@@ -112,6 +114,44 @@ class GameRunner:
 
         #  Make screen aware of torpedo
         self.__screen.register_torpedo(torpedo)
+
+    def intersect_torpedo_asteroid(self, asteroid, torpedo):
+        """
+        Runs the code that intersect torpedo and asteroid,
+        and splits the asteroid
+        :param asteroid: The asteroid to split
+        :param torpedo: The torpedo that hits the asteroid
+        :return: NOTHING
+        """
+        self.__score += asteroid.get_score()
+        self.__screen.set_score(self.__score)
+        self.__screen.unregister_torpedo(torpedo)
+        self.__torpedos.remove(torpedo)
+
+        #  Split the asteroid
+        size = asteroid.get_size() - 1
+        self.__asteroids.remove(asteroid)
+        self.__screen.unregister_asteroid(asteroid)
+
+        if size > 0:
+            position = asteroid.get_position()
+            v_asteroid = asteroid.get_velocity()
+            v_torpedo = torpedo.get_velocity()
+
+            v_norm = math.sqrt(
+                v_asteroid[0]**2 + v_asteroid[1]**2
+            )
+
+            v_x = (v_asteroid[0] + v_torpedo[0]) / v_norm
+            v_y = (v_asteroid[1] + v_torpedo[1]) / v_norm
+
+            asteroid1 = Asteroid(position, [v_x, v_y], size)
+            asteroid2 = Asteroid(position, [-v_x, -v_y], size)
+
+            self.__screen.register_asteroid(asteroid1, size)
+            self.__asteroids.append(asteroid1)
+            self.__screen.register_asteroid(asteroid2, size)
+            self.__asteroids.append(asteroid2)
 
     def _random_position(self):
         """
@@ -193,6 +233,11 @@ class GameRunner:
             angle = torpedo.angle
             self.__screen.draw_torpedo(torpedo, position[0], position[1],
                                        angle)
+
+            intersection = torpedo.has_intersection(self.__asteroids)
+
+            if intersection is not None:
+                self.intersect_torpedo_asteroid(intersection, torpedo)
 
         for ast in self.__asteroids:
             if ast.has_intersection(self.__ship):

@@ -6,6 +6,7 @@
 #############################################################
 
 from element import Element
+import utills as uti
 
 TORPEDO_SIZE = 4
 
@@ -23,5 +24,22 @@ class Torpedo(Element):
 
         Element.__init__(self, position, velocity, angle)
 
-    def get_size(self):
+    def get_radius (self):
         return TORPEDO_SIZE
+
+    def has_intersection(self, list):
+        """
+        Checks if torpedo has an intersection
+        with one of the elements in list, if
+        yes it returns the first element in it.
+        :param list: List of elemenets
+        :return: Element it is going to intersect with
+        or none
+        """
+
+        for elem in list:
+            d = uti.distance(self.get_position(), elem.get_position())
+            if d <= self.get_radius() + elem.get_radius():
+                return elem
+
+        return None

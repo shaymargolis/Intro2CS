@@ -37,3 +37,19 @@ class Asteroid(Element):
     def has_intersection(self, obj):
         d = u.distance(self.get_position(), obj.get_position())
         return d <= self.get_radius() + obj.get_radius()
+
+    def get_score(self):
+        """
+        Returns the score that will be given
+        if a torpedo hits the asteroid according
+        to the size
+        :return: The score
+        """
+
+        if self.size == 1:
+            return 100
+
+        if self.size == 2:
+            return 50
+
+        return 20
