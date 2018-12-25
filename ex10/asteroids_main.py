@@ -1,11 +1,17 @@
 from screen import Screen
 from ship import Ship
+from asteroid import Asteroid
 import sys
 import random
 import math
+from utills import *
 
 DEFAULT_ASTEROIDS_NUM = 5
 TURNING_ANGLE = 7
+U_SPD_LIM = 4
+L_SPD_LIM = 1
+ASTEROID_SIZE = 3
+
 
 class GameRunner:
     def __init__(self, asteroids_amount):
@@ -19,8 +25,16 @@ class GameRunner:
         random_pos = self._random_position()
         velocity = (0, 0)
         self.__ship = Ship(random_pos, velocity, 0)
-
         self.__draw_ship()
+        self.__asteroids = []
+        for i in range(asteroids_amount):
+            random_pos = self._random_position()
+            while distance(random_pos, self.__ship.get_position()) <= 3:
+                random_pos = self._random_position()
+            random_vel = random_speed()
+            asteroid = Asteroid(random_pos, random_vel, ASTEROID_SIZE)
+            Screen.register_asteroid(asteroid, ASTEROID_SIZE)
+            self.__asteroids.append(asteroid)
 
     def __draw_ship(self):
         position = self.__ship.get_position()
