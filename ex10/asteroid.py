@@ -6,9 +6,12 @@
 #############################################################
 
 from element import Element
+import utills as u
 
 
 class Asteroid(Element):
+    SIZE_FACTOR = 10
+    NORMAL_FACTOR = 5
 
     def __init__(self, position, velocity, size):
         """
@@ -27,3 +30,10 @@ class Asteroid(Element):
 
     def set_size(self, new_size):
         self.size = new_size
+
+    def get_radius(self):
+        return self.get_size() * self.SIZE_FACTOR - self.NORMAL_FACTOR
+
+    def has_intersection(self, obj):
+        d = u.distance(self.get_position(), obj.get_position())
+        return d <= self.get_radius() + obj.get_radius()

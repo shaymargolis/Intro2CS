@@ -1,3 +1,4 @@
+import utills as ut
 from screen import Screen
 from ship import Ship
 from asteroid import Asteroid
@@ -5,14 +6,16 @@ from torpedo import Torpedo
 import sys
 import random
 import math
-from utills import *
+
 
 DEFAULT_ASTEROIDS_NUM = 5
 TURNING_ANGLE = 7
 U_SPD_LIM = 4
 L_SPD_LIM = 1
 ASTEROID_SIZE = 3
-
+HIT_TITLE = "OH NO!"
+HIT_MESSAGE = "It seems like you were hit and lost a life! watch out!"
+SHIP_LIFE = 3
 
 class GameRunner:
     def __init__(self, asteroids_amount):
@@ -27,16 +30,16 @@ class GameRunner:
         self.__torpedos = []
 
         random_pos = self._random_position()
-        self.__ship = Ship(random_pos, velocity, 0)
+        self.__ship = Ship(random_pos, velocity, 0,SHIP_LIFE)
         self.__draw_ship()
         self.__asteroids = []
         for i in range(asteroids_amount):
             random_pos = self._random_position()
-            while distance(random_pos, self.__ship.get_position()) <= 3:
+            while ut.distance(random_pos, self.__ship.get_position()) <= 3:
                 random_pos = self._random_position()
-            random_vel = random_speed()
+            random_vel = ut.random_speed()
             asteroid = Asteroid(random_pos, random_vel, ASTEROID_SIZE)
-            Screen.register_asteroid(asteroid, ASTEROID_SIZE)
+            self.__screen.register_asteroid(asteroid, ASTEROID_SIZE)
             self.__asteroids.append(asteroid)
 
     def __draw_ship(self):
@@ -160,9 +163,23 @@ class GameRunner:
             self.set_next_position(torpedo)
             position = torpedo.position
             angle = torpedo.angle
-            self.__screen.draw_torpedo(torpedo, position[0], position[1], angle)
+            self.__screen.draw_torpedo(torpedo, position[0], position[1],
+                                       angle)
 
-        #  Draw ship again
+        for ast in self.__asteroids:
+            if ast.has_intersection(self.__ship):
+                self.__ship.decrease_life()
+                self.__screen.remove_life()
+                self.__screen.show_message(HIT_TITLE, HIT_MESSAGE)
+                self.__asteroids.remove(ast)
+                self.__screen.unregister_asteroid(ast)
+            else:
+                self.set_next_position(ast)
+                position = ast.position
+                self.__screen.draw_asteroid(ast, position[0], position[1])
+
+
+        # Draw ship again
         self.__draw_ship()
 
 

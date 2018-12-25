@@ -9,8 +9,9 @@ from element import Element
 
 
 class Ship(Element):
+    SHIP_RADIUS = 1
 
-    def __init__(self, position, velocity, angle):
+    def __init__(self, position, velocity, angle,life):
         """
         Creates a ship class instance
         :param position: position vector (x,y)
@@ -18,6 +19,14 @@ class Ship(Element):
         :param angle: angle in degrees
         :return:
         """
-
+        self.__life = life
         Element.__init__(self, position, velocity, angle)
 
+    def decrease_life(self):
+        self.__life -= 1
+
+    def get_life(self):
+        return self.__life
+
+    def get_radius(self):
+        return self.SHIP_RADIUS
