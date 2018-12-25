@@ -6,9 +6,15 @@
 #############################################################
 
 from element import Element
+import utills as uti
 
 
 class Torpedo(Element):
+    """
+    An torpedo element contains functions
+    for specific torpedo properties.
+    """
+
     TORPEDO_SIZE = 4
     TORPEDO_LIFE_TIME = 200
 
@@ -24,10 +30,47 @@ class Torpedo(Element):
         Element.__init__(self, position, velocity, angle)
 
     def get_size(self):
+        """
+        Returns the size of the torpedo
+        :return:
+        """
         return self.TORPEDO_SIZE
 
     def get_life_time(self):
+        """
+        Returns the remaining life time of
+        the torpedo
+        :return:
+        """
         return self.__ttl
 
     def decrease_life_time(self):
+        """
+        Decreases remaining life time by 1.
+        :return:
+        """
         self.__ttl -= 1
+
+    def get_radius (self):
+        """
+        Returns the radius of the torpedo element
+        :return:
+        """
+        return self.TORPEDO_SIZE
+
+    def has_intersection(self, list):
+        """
+        Checks if torpedo has an intersection
+        with one of the elements in list, if
+        yes it returns the first element in it.
+        :param list: List of elemenets
+        :return: Element it is going to intersect with
+        or none
+        """
+
+        for elem in list:
+            d = uti.distance(self.get_position(), elem.get_position())
+            if d <= self.get_radius() + elem.get_radius():
+                return elem
+
+        return None

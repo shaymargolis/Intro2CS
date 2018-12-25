@@ -36,24 +36,48 @@ class GameRunner:
         self.__screen_min_x = Screen.SCREEN_MIN_X
         self.__screen_min_y = Screen.SCREEN_MIN_Y
 
+        self.__score = INIT_SCORE
+
         random_pos = self._random_position()
         self.__ship = Ship(random_pos, velocity, 0, SHIP_LIFE)
         self.__draw_ship()
 
         self.__torpedos = []
 
+        self.__init_asteroid(asteroids_amount)
+
+    def __init_asteroid(self, asteroids_amount):
+        """
+        Adds the initial asteroids according to
+        the starting asteroids_amount
+        :param asteroids_amount: The amount to add
+        :return:
+        """
+
+        #  Create new asteroids array
         self.__asteroids = []
+
         for i in range(asteroids_amount):
+            #  Create an random position that
+            #  is far enough from the ship
             random_pos = self._random_position()
             while ut.distance(random_pos, self.__ship.get_position()) <= 3:
                 random_pos = self._random_position()
+
+            #  Get a random speed
             random_vel = ut.random_speed()
+
+            #  Add the asteroid to the system
             asteroid = Asteroid(random_pos, random_vel, ASTEROID_SIZE)
             self.__screen.register_asteroid(asteroid, ASTEROID_SIZE)
             self.__asteroids.append(asteroid)
-        self.__score = INIT_SCORE
 
     def __draw_ship(self):
+        """
+        Draws the current position of the speed
+        to the screen
+        :return:
+        """
         position = self.__ship.get_position()
         angle = self.__ship.get_angle()
         self.__screen.draw_ship(position[0], position[1], angle)
@@ -71,27 +95,51 @@ class GameRunner:
                                      self.__screen_min_y, self.__screen_max_y
         delta_x = max_x - min_x
         delta_y = max_y - min_y
-        position_x = (elem.position[0] + ship_velocity[
-            0] - min_x) % delta_x + min_x
-        position_y = (elem.position[1] + ship_velocity[
-            1] - min_y) % delta_y + min_y
+
+        #  Calculate next position according to the velocity
+        #  according to the formula
+        position_x = \
+            (elem.position[0] + ship_velocity[0] - min_x) % delta_x \
+            + min_x
+        position_y = \
+            (elem.position[1] + ship_velocity[1] - min_y) % delta_y \
+            + min_y
+
         elem.set_position([position_x, position_y])
 
     def turn_ship(self, angle):
+        """
+        Turns the ship by a specific angle
+        (degrees)
+        :param angle: The angle to move by.
+        :return:
+        """
         self.__ship.set_angle(self.__ship.get_angle() + angle)
 
     def accelerate_ship(self):
-        """ to do: change back acceleration"""
+        """
+        Accelerates ship (After up press)
+        :return:
+        """
+
+        #  Get current velocity and angle
         ship_velocity = self.__ship.get_velocity()
         ship_angle = self.__ship.get_angle()
-        velocity_x = ship_velocity[0] + 0.2 * math.cos(
+
+        #  Calculate velocity by formula
+        velocity_x = ship_velocity[0] + math.cos(
             ship_angle * math.pi / 180)
-        velocity_y = ship_velocity[1] + 0.2 * math.sin(
+        velocity_y = ship_velocity[1] + math.sin(
             ship_angle * math.pi / 180)
 
         self.__ship.set_velocity((velocity_x, velocity_y))
 
     def launch_torpedo(self):
+        """
+        Launches torpedo from current position
+        of the space ship.
+        :return:
+        """
         #  Get launch parameters from current
         #  position and angle of the ship
         position = self.__ship.get_position()
@@ -115,6 +163,63 @@ class GameRunner:
         #  Make screen aware of torpedo
         self.__screen.register_torpedo(torpedo)
 
+    def split_asteroid(self, asteroid, torpedo):
+        """
+        Removes asteroid from the screen and splits
+        it if the size is more than 1.
+        :param asteroid: the asteroid to split
+        :param torpedo: the torpedo that hit
+        :return:
+        """
+
+        #  Remove the asteroid from the screen
+        size = asteroid.get_size() - 1
+        self.__asteroids.remove(asteroid)
+        self.__screen.unregister_asteroid(asteroid)
+
+        #  Only if size-1 of the asteroid is not 0,
+        #  split the asteroid to 2.
+        if size > 0:
+            position = asteroid.get_position()
+            v_asteroid = asteroid.get_velocity()
+            v_torpedo = torpedo.get_velocity()
+
+            #  Calculate new speed by the formula
+            v_norm = math.sqrt(
+                v_asteroid[0]**2 + v_asteroid[1]**2
+            )
+
+            v_x = (v_asteroid[0] + v_torpedo[0]) / v_norm
+            v_y = (v_asteroid[1] + v_torpedo[1]) / v_norm
+
+            #  Add 2 asteroid with reversed velocities
+            asteroid1 = Asteroid(position, [v_x, v_y], size)
+            asteroid2 = Asteroid(position, [-v_x, -v_y], size)
+
+            self.__screen.register_asteroid(asteroid1, size)
+            self.__asteroids.append(asteroid1)
+            self.__screen.register_asteroid(asteroid2, size)
+            self.__asteroids.append(asteroid2)
+
+    def intersect_torpedo_asteroid(self, asteroid, torpedo):
+        """
+        Runs the code that intersect torpedo and asteroid,
+        and splits the asteroid
+        :param asteroid: The asteroid to split
+        :param torpedo: The torpedo that hits the asteroid
+        :return: NOTHING
+        """
+
+        #  Increment the score, set it and
+        #  remove the torpedo
+        self.__score += asteroid.get_score()
+        self.__screen.set_score(self.__score)
+        self.__screen.unregister_torpedo(torpedo)
+        self.__torpedos.remove(torpedo)
+
+        #  Split the asteroid
+        self.split_asteroid(asteroid, torpedo)
+
     def _random_position(self):
         """
         Returns random position between
@@ -132,6 +237,112 @@ class GameRunner:
 
         return random_x, random_y
 
+    def teleport(self):
+        """
+        Teleports the ship to a location that
+        is not occupied by a asteroid
+        :return:
+        """
+        #  Get a random position
+        #  That is atleast 3 distances
+        #  away from any asteroid.
+        position = self._random_position()
+        min_distance = 0
+        while min_distance <= 3:
+            random_pos = self._random_position()
+            #  Get the minimal distance from
+            #  the asteroids.
+            min_distance = min(map(
+                lambda x: ut.distance(random_pos, x.get_position()),
+                self.__asteroids
+            ))
+
+        # Set the position
+        self.__ship.set_position(position)
+
+    def check_for_end(self):
+        """
+        Checks if the end of the game came,
+        by different methods of game ending.
+        :return:
+        """
+        #  Flag to know if we should
+        #  exit the game window
+        end = False
+
+        #  The user pressed 'q'
+        if self.__screen.should_end():
+            self.__screen.show_message(SHOULD_END_TITLE, SHOULD_END_MESSAGE)
+            end = True
+
+        #  There are no asteroids left
+        if len(self.__asteroids) == 0:
+            self.__screen.show_message(WIN_TITLE, WIN_MESSAGE)
+            end = True
+
+        #  The user is out of life
+        if self.__ship.get_life() == 0:
+            self.__screen.show_message(LOOSE_TITLE, LOOSE_MESSAGE)
+            end = True
+
+        if end:
+            self.__screen.end_game()
+            sys.exit(0)
+
+    def update_torpedoes(self):
+        """
+        Moves the torpedoes to the next
+        location according to their speed.
+        Checks if every torpedo has hit an
+        asteroid and split it accordingly
+        :return:
+        """
+
+        for torpedo in self.__torpedos:
+            #  If the torpedo is out of life,
+            #  remove it.
+            if torpedo.get_life_time() <= 0:
+                self.__screen.unregister_torpedo(torpedo)
+                self.__torpedos.remove(torpedo)
+                continue
+
+            #  Move the torpedo to next location
+            self.set_next_position(torpedo)
+            position = torpedo.position
+            angle = torpedo.angle
+            self.__screen.draw_torpedo(torpedo, position[0], position[1],
+                                       angle)
+            torpedo.decrease_life_time()
+
+            #  Check if the torpedo hit an asteroid
+            intersection = torpedo.has_intersection(self.__asteroids)
+
+            if intersection is not None:
+                self.intersect_torpedo_asteroid(intersection, torpedo)
+
+    def update_asteroids(self):
+        """
+        Moves the asteroids to the next
+        location according to their speed,
+        decreases life of ship if hits a ship.
+        :return:
+        """
+        for ast in self.__asteroids:
+            #  Move asteroid to next position
+            self.set_next_position(ast)
+            position = ast.position
+            self.__screen.draw_asteroid(ast, position[0], position[1])
+
+            #  Check if we hit a ship, and if yes
+            #  remove the asteroids, decrease life
+            #  and show message
+            if ast.has_intersection(self.__ship):
+                self.__ship.decrease_life()
+                self.__screen.remove_life()
+                self.__screen.show_message(HIT_TITLE, HIT_MESSAGE)
+                self.__asteroids.remove(ast)
+                self.__screen.unregister_asteroid(ast)
+
     def run(self):
         self._do_loop()
         self.__screen.start_screen()
@@ -145,30 +356,11 @@ class GameRunner:
         self.__screen.ontimer(self._do_loop, 5)
 
     def _game_loop(self):
-        # Your code goes here
-        ship_position = self.__ship.get_position()
-        ship_velocity = self.__ship.get_velocity()
-        ship_angle = self.__ship.get_angle()
-
-        #  Check for teleport
-        if self.__screen.is_teleport_pressed():
-            #  Get a random position
-            #  That is atleast 3 distances
-            #  away from any asteroid.
-            position = self._random_position()
-            min_distance = 0
-            while min_distance <= 3:
-                random_pos = self._random_position()
-                #  Get the minimal distance from
-                #  the asteroids.
-                min_distance = min(map(
-                    lambda x: ut.distance(random_pos, x.get_position()),
-                    self.__asteroids
-                ))
-
-            # Set the position
-            self.__ship.set_position(position)
-
+        """
+        The main game loop.
+        :return:
+        """
+        #  Check for key presses
         if self.__screen.is_left_pressed():
             #  Move angle of ship
             self.turn_ship(TURNING_ANGLE)
@@ -190,53 +382,18 @@ class GameRunner:
         self.set_next_position(self.__ship)
 
         # Move torpedos by velocity
-        for torpedo in self.__torpedos:
-            if torpedo.get_life_time() <= 0:
-                self.__screen.unregister_torpedo(torpedo)
-                self.__torpedos.remove(torpedo)
-            else:
-                self.set_next_position(torpedo)
-                position = torpedo.position
-                angle = torpedo.angle
-                self.__screen.draw_torpedo(torpedo, position[0], position[1],
-                                           angle)
-                torpedo.decrease_life_time()
-
-        for ast in self.__asteroids:
-            if ast.has_intersection(self.__ship):
-                self.__ship.decrease_life()
-                self.__screen.remove_life()
-                self.__screen.show_message(HIT_TITLE, HIT_MESSAGE)
-                self.__asteroids.remove(ast)
-                self.__screen.unregister_asteroid(ast)
-            else:
-                self.set_next_position(ast)
-                position = ast.position
-                self.__screen.draw_asteroid(ast, position[0], position[1])
-
+        self.update_torpedoes()
+        self.update_asteroids()
 
         # Draw ship again
         self.__draw_ship()
 
-        #  Check for victory
-        #  The user pressed 'q'
-        end = False
+        #  Check for end of game
+        self.check_for_end()
 
-        if self.__screen.should_end():
-            self.__screen.show_message(SHOULD_END_TITLE, SHOULD_END_MESSAGE)
-            end = True
-
-        if len(self.__asteroids) == 0:
-            self.__screen.show_message(WIN_TITLE, WIN_MESSAGE)
-            end = True
-
-        if self.__ship.get_life() == 0:
-            self.__screen.show_message(LOOSE_TITLE, LOOSE_MESSAGE)
-            end = True
-
-        if end:
-            self.__screen.end_game()
-            sys.exit(0)
+        #  Check for teleport
+        if self.__screen.is_teleport_pressed():
+            self.teleport()
 
 
 def main(amount):

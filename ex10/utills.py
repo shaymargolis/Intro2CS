@@ -24,4 +24,10 @@ def random_speed():
 
 
 def distance(p1, p2):
+    """
+    returns the distance between p1 and p2
+    :param p1: [x,y] array
+    :param p2: [x,y] array
+    :return: distance number
+    """
     return math.sqrt((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2)
