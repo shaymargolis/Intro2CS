@@ -2,8 +2,10 @@ from screen import Screen
 from ship import Ship
 import sys
 import random
+import math
 
 DEFAULT_ASTEROIDS_NUM = 5
+dt = 0.03
 
 
 class GameRunner:
@@ -59,6 +61,7 @@ class GameRunner:
     def _game_loop(self):
         # Your code goes here
         ship_position = self.__ship.get_position()
+        ship_velocity = self.__ship.get_velocity()
         ship_angle = self.__ship.get_angle()
 
         if self.__screen.is_left_pressed():
@@ -68,6 +71,16 @@ class GameRunner:
         if self.__screen.is_right_pressed():
             #  Move angle of ship
             self.__ship.set_angle(ship_angle - 7)
+
+        if self.__screen.is_up_pressed():
+            #  Accelerate ship
+            velocity_x = ship_velocity[0] + math.cos(ship_angle * math.pi / 180)
+            velocity_y = ship_velocity[1] + math.sin(ship_angle * math.pi / 180)
+
+            self.__ship.set_velocity((velocity_x, velocity_y))
+
+        #  Move ship by velocity
+        self.__ship.set_next_position(dt)
 
         #  Draw ship again
         self.__draw_ship()

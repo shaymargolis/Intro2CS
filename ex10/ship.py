@@ -20,3 +20,17 @@ class Ship(Element):
         """
 
         Element.__init__(self, position, velocity, angle)
+
+    def set_next_position(self, dt):
+        """
+        Sets next position by current velocity, according
+        to the time step dt.
+        :param dt: time in [s]
+        :return:
+        """
+
+        ship_velocity = self.get_velocity()
+        position_x = self.position[0] + ship_velocity[0] * dt
+        position_y = self.position[1] + ship_velocity[1] * dt
+
+        self.set_position((position_x, position_y))
