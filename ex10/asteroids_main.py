@@ -17,6 +17,11 @@ HIT_TITLE = "OH NO!"
 HIT_MESSAGE = "It seems like you were hit and lost a life! watch out!"
 SHIP_LIFE = 3
 
+SHOULD_END_MESSAGE = "You asked for quit. Hope to see you again!"
+VICTORY_MESSAGE = "Yay! You won!"
+LOOSE_MESSAGE = "Oh no! you just died."
+
+
 class GameRunner:
     def __init__(self, asteroids_amount):
         self.__screen = Screen()
@@ -27,11 +32,12 @@ class GameRunner:
         self.__screen_min_x = Screen.SCREEN_MIN_X
         self.__screen_min_y = Screen.SCREEN_MIN_Y
 
-        self.__torpedos = []
-
         random_pos = self._random_position()
         self.__ship = Ship(random_pos, velocity, 0,SHIP_LIFE)
         self.__draw_ship()
+
+        self.__torpedos = []
+
         self.__asteroids = []
         for i in range(asteroids_amount):
             random_pos = self._random_position()
@@ -181,6 +187,26 @@ class GameRunner:
 
         # Draw ship again
         self.__draw_ship()
+
+        #  Check for victory
+        #  The user pressed 'q'
+        end = False
+
+        if self.__screen.should_end():
+            self.__screen.show_message(SHOULD_END_MESSAGE)
+            end = True
+
+        if len(self.__asteroids) == 0:
+            self.__screen.show_message(VICTORY_MESSAGE)
+            end = True
+
+        if self.__ship.get_life() == 0:
+            self.__screen.show_message(LOOSE_MESSAGE)
+            end = True
+
+        if end:
+            self.__screen.end_game()
+            sys.exit(0)
 
 
 def main(amount):

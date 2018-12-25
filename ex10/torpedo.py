@@ -7,6 +7,8 @@
 
 from element import Element
 
+TORPEDO_SIZE = 4
+
 
 class Torpedo(Element):
 
@@ -20,3 +22,6 @@ class Torpedo(Element):
         """
 
         Element.__init__(self, position, velocity, angle)
+
+    def get_size(self):
+        return TORPEDO_SIZE
