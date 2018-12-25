@@ -28,6 +28,7 @@ TORPEDO_LIMIT = 10
 SPECIAL_LIMIT = 5
 SPECIAL_FACTOR = 10
 
+
 class GameRunner:
     def __init__(self, asteroids_amount):
         self.__screen = Screen()
@@ -147,7 +148,10 @@ class GameRunner:
         #  position and angle of the ship
         position = self.__ship.get_position()
         for i in range(5):
-            special = Special(position, [SPECIAL_FACTOR*math.sin((i*360/5)/360*2*math.pi), SPECIAL_FACTOR*math.cos((i*360/5)/360*2*math.pi)], i*360/5)
+            special = Special(position, [
+                SPECIAL_FACTOR * math.sin((i * 360 / 5) / 360 * 2 * math.pi),
+                SPECIAL_FACTOR * math.cos((i * 360 / 5) / 360 * 2 * math.pi)],
+                              i * 360 / 5)
             self.__specials.append(special)
             self.__screen.register_torpedo(special)
 
@@ -232,12 +236,12 @@ class GameRunner:
         self.__score += asteroid.get_score()
         self.__screen.set_score(self.__score)
         self.__screen.unregister_torpedo(torpedo)
-        if isinstance(torpedo,Special):
+        if isinstance(torpedo, Special):
             self.__specials.remove(torpedo)
-        elif isinstance(torpedo,Torpedo):
+        elif isinstance(torpedo, Torpedo):
             self.__torpedos.remove(torpedo)
 
-        #  Split the asteroid
+        # Split the asteroid
         self.split_asteroid(asteroid, torpedo)
 
     def _random_position(self):
@@ -317,7 +321,7 @@ class GameRunner:
         asteroid and split it accordingly
         :return:
         """
-        objects = self.__torpedos+self.__specials
+        objects = self.__torpedos + self.__specials
         for torpedo in objects:
             #  If the torpedo is out of life,
             #  remove it.
