@@ -6,13 +6,14 @@
 #############################################################
 
 from element import Element
+from torpedo import Torpedo
 
 
-class Special(Element):
-    SPECIAL = 4
-    TORPEDO_LIFE_TIME = 200
+class Special(Torpedo):
+    SPECIAL_SIZE = 4
+    SPECIAL_LIFE_TIME = 150
 
-    def __init__(self, position, velocity, angle, ttl=TORPEDO_LIFE_TIME):
+    def __init__(self, position, velocity, angle, ttl=SPECIAL_LIFE_TIME):
         """
         Creates a torpedo class instance
         :param position: position vector (x,y)
@@ -20,14 +21,8 @@ class Special(Element):
         :param angle: angle in degrees
         :return:
         """
-        self.__ttl = ttl
-        Element.__init__(self, position, velocity, angle)
+        Torpedo.__init__(self,position, velocity, angle, ttl)
 
     def get_size(self):
-        return self.TORPEDO_SIZE
+        return self.SPECIAL_SIZE
 
-    def get_life_time(self):
-        return self.__ttl
-
-    def decrease_life_time(self):
-        self.__ttl -= 1

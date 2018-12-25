@@ -3,6 +3,7 @@ from screen import Screen
 from ship import Ship
 from asteroid import Asteroid
 from torpedo import Torpedo
+from special import Special
 import sys
 import random
 import math
@@ -24,7 +25,8 @@ LOOSE_MESSAGE = "Oh no! you just died."
 LOOSE_TITLE = "you LOST!"
 WIN_TITLE = "you WON!"
 TORPEDO_LIMIT = 10
-
+SPECIAL_LIMIT = 5
+SPECIAL_FACTOR = 10
 
 class GameRunner:
     def __init__(self, asteroids_amount):
@@ -43,6 +45,7 @@ class GameRunner:
         self.__draw_ship()
 
         self.__torpedos = []
+        self.__specials = []
 
         self.__init_asteroid(asteroids_amount)
 
@@ -64,7 +67,7 @@ class GameRunner:
             while ut.distance(random_pos, self.__ship.get_position()) <= 3:
                 random_pos = self._random_position()
 
-            #  Get a random speed
+            # Get a random speed
             random_vel = ut.random_speed()
 
             #  Add the asteroid to the system
@@ -134,6 +137,20 @@ class GameRunner:
 
         self.__ship.set_velocity((velocity_x, velocity_y))
 
+    def launch_special(self):
+        """
+        Launches special shot from current position
+        of the space ship.
+        :return:
+        """
+        #  Get launch parameters from current
+        #  position and angle of the ship
+        position = self.__ship.get_position()
+        for i in range(5):
+            special = Special(position, [SPECIAL_FACTOR*math.sin((i*360/5)/360*2*math.pi), SPECIAL_FACTOR*math.cos((i*360/5)/360*2*math.pi)], i*360/5)
+            self.__specials.append(special)
+            self.__screen.register_torpedo(special)
+
     def launch_torpedo(self):
         """
         Launches torpedo from current position
@@ -186,7 +203,7 @@ class GameRunner:
 
             #  Calculate new speed by the formula
             v_norm = math.sqrt(
-                v_asteroid[0]**2 + v_asteroid[1]**2
+                v_asteroid[0] ** 2 + v_asteroid[1] ** 2
             )
 
             v_x = (v_asteroid[0] + v_torpedo[0]) / v_norm
@@ -215,7 +232,10 @@ class GameRunner:
         self.__score += asteroid.get_score()
         self.__screen.set_score(self.__score)
         self.__screen.unregister_torpedo(torpedo)
-        self.__torpedos.remove(torpedo)
+        if isinstance(torpedo,Special):
+            self.__specials.remove(torpedo)
+        elif isinstance(torpedo,Torpedo):
+            self.__torpedos.remove(torpedo)
 
         #  Split the asteroid
         self.split_asteroid(asteroid, torpedo)
@@ -275,12 +295,12 @@ class GameRunner:
             self.__screen.show_message(SHOULD_END_TITLE, SHOULD_END_MESSAGE)
             end = True
 
-        #  There are no asteroids left
+        # There are no asteroids left
         if len(self.__asteroids) == 0:
             self.__screen.show_message(WIN_TITLE, WIN_MESSAGE)
             end = True
 
-        #  The user is out of life
+        # The user is out of life
         if self.__ship.get_life() == 0:
             self.__screen.show_message(LOOSE_TITLE, LOOSE_MESSAGE)
             end = True
@@ -297,16 +317,19 @@ class GameRunner:
         asteroid and split it accordingly
         :return:
         """
-
-        for torpedo in self.__torpedos:
+        objects = self.__torpedos+self.__specials
+        for torpedo in objects:
             #  If the torpedo is out of life,
             #  remove it.
             if torpedo.get_life_time() <= 0:
                 self.__screen.unregister_torpedo(torpedo)
-                self.__torpedos.remove(torpedo)
+                if isinstance(torpedo, Special):
+                    self.__specials.remove(torpedo)
+                elif isinstance(torpedo, Torpedo):
+                    self.__torpedos.remove(torpedo)
                 continue
 
-            #  Move the torpedo to next location
+            # Move the torpedo to next location
             self.set_next_position(torpedo)
             position = torpedo.position
             angle = torpedo.angle
@@ -377,6 +400,11 @@ class GameRunner:
             #  Create torpedo
             if len(self.__torpedos) < TORPEDO_LIMIT:
                 self.launch_torpedo()
+
+        if self.__screen.is_special_pressed():
+            # create special
+            if len(self.__specials) < SPECIAL_LIMIT:
+                self.launch_special()
 
         # Move ship by velocity
         self.set_next_position(self.__ship)
