@@ -10,6 +10,11 @@ import utills as uti
 
 
 class Torpedo(Element):
+    """
+    An torpedo element contains functions
+    for specific torpedo properties.
+    """
+
     TORPEDO_SIZE = 4
     TORPEDO_LIFE_TIME = 200
 
@@ -25,15 +30,32 @@ class Torpedo(Element):
         Element.__init__(self, position, velocity, angle)
 
     def get_size(self):
+        """
+        Returns the size of the torpedo
+        :return:
+        """
         return self.TORPEDO_SIZE
 
     def get_life_time(self):
+        """
+        Returns the remaining life time of
+        the torpedo
+        :return:
+        """
         return self.__ttl
 
     def decrease_life_time(self):
+        """
+        Decreases remaining life time by 1.
+        :return:
+        """
         self.__ttl -= 1
 
     def get_radius (self):
+        """
+        Returns the radius of the torpedo element
+        :return:
+        """
         return self.TORPEDO_SIZE
 
     def has_intersection(self, list):
