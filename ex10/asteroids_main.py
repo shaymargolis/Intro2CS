@@ -145,6 +145,25 @@ class GameRunner:
         ship_velocity = self.__ship.get_velocity()
         ship_angle = self.__ship.get_angle()
 
+        #  Check for teleport
+        if self.__screen.is_teleport_pressed():
+            #  Get a random position
+            #  That is atleast 3 distances
+            #  away from any asteroid.
+            position = self._random_position()
+            min_distance = 0
+            while min_distance <= 3:
+                random_pos = self._random_position()
+                #  Get the minimal distance from
+                #  the asteroids.
+                min_distance = min(map(
+                    lambda x: ut.distance(random_pos, x.get_position()),
+                    self.__asteroids
+                ))
+
+            #  Set the position
+            self.__ship.set_position(position)
+
         if self.__screen.is_left_pressed():
             #  Move angle of ship
             self.turn_ship(TURNING_ANGLE)
