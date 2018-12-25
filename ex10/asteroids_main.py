@@ -13,6 +13,10 @@ U_SPD_LIM = 4
 L_SPD_LIM = 1
 ASTEROID_SIZE = 3
 
+SHOULD_END_MESSAGE = "You asked for quit. Hope to see you again!"
+VICTORY_MESSAGE = "Yay! You won!"
+LOOSE_MESSAGE = "Oh no! you just died."
+
 
 class GameRunner:
     def __init__(self, asteroids_amount):
@@ -165,6 +169,26 @@ class GameRunner:
 
         #  Draw ship again
         self.__draw_ship()
+
+        #  Check for victory
+        #  The user pressed 'q'
+        end = False
+
+        if self.__screen.should_end():
+            self.__screen.show_message(SHOULD_END_MESSAGE)
+            end = True
+
+        if len(self.__asteroids) == 0:
+            self.__screen.show_message(VICTORY_MESSAGE)
+            end = True
+
+        if self.__ship.get_life() == 0:
+            self.__screen.show_message(LOOSE_MESSAGE)
+            end = True
+
+        if end:
+            self.__screen.end_game()
+            sys.exit(0)
 
 
 def main(amount):
