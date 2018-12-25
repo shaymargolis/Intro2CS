@@ -7,12 +7,12 @@
 
 from element import Element
 
-TORPEDO_SIZE = 4
-
 
 class Torpedo(Element):
+    TORPEDO_SIZE = 4
+    TORPEDO_LIFE_TIME = 200
 
-    def __init__(self, position, velocity, angle):
+    def __init__(self, position, velocity, angle, ttl=TORPEDO_LIFE_TIME):
         """
         Creates a torpedo class instance
         :param position: position vector (x,y)
@@ -20,8 +20,14 @@ class Torpedo(Element):
         :param angle: angle in degrees
         :return:
         """
-
+        self.__ttl = ttl
         Element.__init__(self, position, velocity, angle)
 
     def get_size(self):
-        return TORPEDO_SIZE
+        return self.TORPEDO_SIZE
+
+    def get_life_time(self):
+        return self.__ttl
+
+    def decrease_life_time(self):
+        self.__ttl -= 1

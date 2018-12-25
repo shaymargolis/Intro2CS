@@ -7,7 +7,6 @@ import sys
 import random
 import math
 
-
 DEFAULT_ASTEROIDS_NUM = 5
 TURNING_ANGLE = 7
 U_SPD_LIM = 4
@@ -16,6 +15,7 @@ ASTEROID_SIZE = 3
 HIT_TITLE = "OH NO!"
 HIT_MESSAGE = "It seems like you were hit and lost a life! watch out!"
 SHIP_LIFE = 3
+INIT_SCORE = 0
 
 SHOULD_END_TITLE = "Quitting"
 SHOULD_END_MESSAGE = "You asked for quit. Hope to see you again!"
@@ -23,6 +23,7 @@ WIN_MESSAGE = "Yay! You won!"
 LOOSE_MESSAGE = "Oh no! you just died."
 LOOSE_TITLE = "you LOST!"
 WIN_TITLE = "you WON!"
+TORPEDO_LIMIT = 10
 
 
 class GameRunner:
@@ -36,7 +37,7 @@ class GameRunner:
         self.__screen_min_y = Screen.SCREEN_MIN_Y
 
         random_pos = self._random_position()
-        self.__ship = Ship(random_pos, velocity, 0,SHIP_LIFE)
+        self.__ship = Ship(random_pos, velocity, 0, SHIP_LIFE)
         self.__draw_ship()
 
         self.__torpedos = []
@@ -50,6 +51,7 @@ class GameRunner:
             asteroid = Asteroid(random_pos, random_vel, ASTEROID_SIZE)
             self.__screen.register_asteroid(asteroid, ASTEROID_SIZE)
             self.__asteroids.append(asteroid)
+        self.__score = INIT_SCORE
 
     def __draw_ship(self):
         position = self.__ship.get_position()
@@ -164,7 +166,7 @@ class GameRunner:
                     self.__asteroids
                 ))
 
-            #  Set the position
+            # Set the position
             self.__ship.set_position(position)
 
         if self.__screen.is_left_pressed():
@@ -181,18 +183,24 @@ class GameRunner:
 
         if self.__screen.is_space_pressed():
             #  Create torpedo
-            self.launch_torpedo()
+            if len(self.__torpedos) < TORPEDO_LIMIT:
+                self.launch_torpedo()
 
         # Move ship by velocity
         self.set_next_position(self.__ship)
 
         # Move torpedos by velocity
         for torpedo in self.__torpedos:
-            self.set_next_position(torpedo)
-            position = torpedo.position
-            angle = torpedo.angle
-            self.__screen.draw_torpedo(torpedo, position[0], position[1],
-                                       angle)
+            if torpedo.get_life_time() <= 0:
+                self.__screen.unregister_torpedo(torpedo)
+                self.__torpedos.remove(torpedo)
+            else:
+                self.set_next_position(torpedo)
+                position = torpedo.position
+                angle = torpedo.angle
+                self.__screen.draw_torpedo(torpedo, position[0], position[1],
+                                           angle)
+                torpedo.decrease_life_time()
 
         for ast in self.__asteroids:
             if ast.has_intersection(self.__ship):
