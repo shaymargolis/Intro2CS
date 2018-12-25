@@ -9,7 +9,22 @@ I discussed the exercise with: .
 ==================
 =  Description:  =
 ==================
-
+a game of asteroids.
 ======================
 =  Special Comments  =
 ======================
+the special shot:
+a shot which shoots 5 torpedoes divided equally around the ship, like a star.
+
+3 decisions we made designing the program:
+
+1. creating a more general class as a base for other classes -  the element class.
+was made as an implementations of OOP principals learned in class in order to make our code more modular, easily expandable and more code-efficient.
+the alternative would be implementing the same basic attributes for each class, over and over again. it would have been less complicated to think of, more easy to see what the class you are looking at actually does.
+we chose the first option because of its obvious advantages.
+2. creating a utilities function file for functions which are often used and doesn't belong to any one of the classes.
+we could have written them in asteroids_main, it would be more file - compact and would require less files and space.
+we chose the first option since it the correct implementation, in order to write simple, clean, readable code.
+3. putting accelerate_ship under GameRunner and not under Ship.
+it sounds like since it is a ship- related method, it should be in the Ship class, for more readable code.
+we chose to put it in GameRunner, since it is actually a method related directly to the game and its rules, and to the properties of the ship. 

@@ -21,7 +21,7 @@ class Special(Torpedo):
         :param angle: angle in degrees
         :return:
         """
-        Torpedo.__init__(self,position, velocity, angle, ttl)
+        Torpedo.__init__(self, position, velocity, angle, ttl)
 
     def get_size(self):
         return self.SPECIAL_SIZE
