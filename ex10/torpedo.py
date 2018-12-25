@@ -32,8 +32,9 @@ class Torpedo(Element):
 
     def decrease_life_time(self):
         self.__ttl -= 1
+
     def get_radius (self):
-        return TORPEDO_SIZE
+        return self.TORPEDO_SIZE
 
     def has_intersection(self, list):
         """
