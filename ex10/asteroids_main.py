@@ -17,6 +17,7 @@ HIT_TITLE = "OH NO!"
 HIT_MESSAGE = "It seems like you were hit and lost a life! watch out!"
 SHIP_LIFE = 3
 
+SHOULD_END_TITLE = "Quitting"
 SHOULD_END_MESSAGE = "You asked for quit. Hope to see you again!"
 WIN_MESSAGE = "Yay! You won!"
 LOOSE_MESSAGE = "Oh no! you just died."
@@ -214,15 +215,15 @@ class GameRunner:
         end = False
 
         if self.__screen.should_end():
-            self.__screen.show_message(SHOULD_END_MESSAGE)
+            self.__screen.show_message(SHOULD_END_TITLE, SHOULD_END_MESSAGE)
             end = True
 
         if len(self.__asteroids) == 0:
-            self.__screen.show_message(WIN_TITLE,WIN_MESSAGE)
+            self.__screen.show_message(WIN_TITLE, WIN_MESSAGE)
             end = True
 
         if self.__ship.get_life() == 0:
-            self.__screen.show_message(LOOSE_TITLE,LOOSE_MESSAGE)
+            self.__screen.show_message(LOOSE_TITLE, LOOSE_MESSAGE)
             end = True
 
         if end:
