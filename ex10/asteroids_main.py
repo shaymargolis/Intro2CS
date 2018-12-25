@@ -24,11 +24,12 @@ class GameRunner:
         self.__screen_min_x = Screen.SCREEN_MIN_X
         self.__screen_min_y = Screen.SCREEN_MIN_Y
 
-        self.__torpedos = []
-
         random_pos = self._random_position()
         self.__ship = Ship(random_pos, velocity, 0)
         self.__draw_ship()
+
+        self.__torpedos = []
+
         self.__asteroids = []
         for i in range(asteroids_amount):
             random_pos = self._random_position()
