@@ -103,7 +103,7 @@ class GameRunner:
 
         if self.__screen.is_right_pressed():
             #  Move angle of ship
-            self.turn_ship(TURNING_ANGLE)
+            self.turn_ship(-TURNING_ANGLE)
 
         if self.__screen.is_up_pressed():
             #  Accelerate ship
