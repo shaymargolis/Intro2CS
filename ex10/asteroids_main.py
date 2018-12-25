@@ -5,11 +5,9 @@ import random
 import math
 
 DEFAULT_ASTEROIDS_NUM = 5
-dt = 0.03
-
+TURNING_ANGLE = 7
 
 class GameRunner:
-
     def __init__(self, asteroids_amount):
         self.__screen = Screen()
 
@@ -28,6 +26,41 @@ class GameRunner:
         position = self.__ship.get_position()
         angle = self.__ship.get_angle()
         self.__screen.draw_ship(position[0], position[1], angle)
+
+    def set_next_position(self):
+        """
+        Sets next position by current velocity, according
+        to the time step dt.
+        :param dt: time in [s]
+        :return:
+        """
+
+        ship = self.__ship
+
+        ship_velocity = ship.get_velocity()
+        min_x, max_x, min_y, max_y = self.__screen_min_x, self.__screen_max_x, \
+                                     self.__screen_min_y, self.__screen_max_y
+        delta_x = max_x - min_x
+        delta_y = max_y - min_y
+        position_x = (ship.position[0] + ship_velocity[
+            0] - min_x) % delta_x + min_x
+        position_y = (ship.position[1] + ship_velocity[
+            1] - min_y) % delta_y + min_y
+        ship.set_position([position_x, position_y])
+
+    def turn_ship(self, angle):
+        self.__ship.set_angle(self.__ship.get_angle() + angle)
+
+    def accelerate_ship(self):
+        """ to do: change back acceleration"""
+        ship_velocity = self.__ship.get_velocity()
+        ship_angle = self.__ship.get_angle()
+        velocity_x = ship_velocity[0] + 0.2 * math.cos(
+            ship_angle * math.pi / 180)
+        velocity_y = ship_velocity[1] + 0.2 * math.sin(
+            ship_angle * math.pi / 180)
+
+        self.__ship.set_velocity((velocity_x, velocity_y))
 
     def _random_position(self):
         """
@@ -66,21 +99,18 @@ class GameRunner:
 
         if self.__screen.is_left_pressed():
             #  Move angle of ship
-            self.__ship.set_angle(ship_angle + 7)
+            self.turn_ship(TURNING_ANGLE)
 
         if self.__screen.is_right_pressed():
             #  Move angle of ship
-            self.__ship.set_angle(ship_angle - 7)
+            self.turn_ship(TURNING_ANGLE)
 
         if self.__screen.is_up_pressed():
             #  Accelerate ship
-            velocity_x = ship_velocity[0] + math.cos(ship_angle * math.pi / 180)
-            velocity_y = ship_velocity[1] + math.sin(ship_angle * math.pi / 180)
+            self.accelerate_ship()
 
-            self.__ship.set_velocity((velocity_x, velocity_y))
-
-        #  Move ship by velocity
-        self.__ship.set_next_position(dt)
+        # Move ship by velocity
+        self.set_next_position()
 
         #  Draw ship again
         self.__draw_ship()

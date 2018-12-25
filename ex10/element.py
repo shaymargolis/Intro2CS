@@ -11,8 +11,8 @@ class Element:
     def __init__(self, position, velocity, angle):
         """
         Creates a element instance
-        :param position: A position vector (x,y)
-        :param velocity: A velocity vector (V_x, V_y)
+        :param position: A position vector [x,y]
+        :param velocity: A velocity vector [V_x, V_y]
         :param size: The size of the asteroid from 1 to 3
         :return:
         """
