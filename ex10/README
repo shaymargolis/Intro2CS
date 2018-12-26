@@ -28,3 +28,8 @@ we chose the first option since it the correct implementation, in order to write
 3. putting accelerate_ship under GameRunner and not under Ship.
 it sounds like since it is a ship- related method, it should be in the Ship class, for more readable code.
 we chose to put it in GameRunner, since it is actually a method related directly to the game and its rules, and to the properties of the ship. 
+
+additional files:
+utills.py  - utility file containing often-used methods
+special.py - a file containing the class Special for the special shot.
+element.py - a file containing the class Element, the base class of our code.
