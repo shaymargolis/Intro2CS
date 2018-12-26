@@ -1,0 +1,65 @@
+========change_wav_reverse=====================
+=   README for ex6: Waves   =
+=============================
+
+==================
+=  Description:  =
+==================
+
+I will write for every function what custom functions
+that I wrote are based on.
+
+full_main:
+    starts the start_menu
+
+start_menu:
+    Shows options for beginning
+    Starts combine_wav, composite_wav, change_wav
+    or exists according to user.
+
+    - save_menu:
+        Shows menu with option to keep editing wav
+        or to save it to file using save_file
+        - save_file:
+            Saves WAV data to file name it gets
+            from the user
+
+change_wav:
+    reads data array and gives options for
+    modify. each sub-function here
+    contains different option to modify
+    the WAV file.
+
+    - change_wav_reverse
+    - change_wav_speed
+    - change_wav_slower
+    - change_wav_higher
+    - change_wav_lower
+    - change_wav_low_pass
+
+    - normalize_data:
+        Normalized data int to be between boundries
+        of WAV value
+
+change_file:
+    Reads WAV file and gives options for modify,
+    using change_wav.
+
+composite_wav:
+    - read_file_lines:
+        Reads lines of file.
+
+    Composites WAV file according to melody in text
+
+combine_wav:
+    Combines two WAV file to one
+
+    - great_calculator_divider:
+        Finds greatest divisor for a,b
+        integers.
+    - merge_data:
+        Merges two WAV data arrays
+        to one
+
+
+

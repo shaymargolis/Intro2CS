@@ -1,0 +1,49 @@
+shaymar
+211831136
+Shay Margolis
+
+I discussed the exercise with: .
+
+=============================
+=  README for ex3: Carrots  =
+=============================
+
+
+==================
+=  Description:  =
+==================
+
+CHECK MAXIMUM:
+
+The test function i wrote in check maximum test 6 different cases:
+1. The array full with zeros - because zero is the minimal value
+   and we want to see if it returns.
+2. (3 different cases) the maximum is found in different indexes in the array.
+3. The maximum is a float
+4. The function should return None if the list is empty.
+
+
+THEORETICAL QUESTIONS:
+
+1. TypeError: object of type 'int' has no len()
+   because the function runs len() function on the array
+   but we give her a int.
+2. It will return 0 because the function initializes first max=0
+   and then searches for values higher than that, and since the input
+   are all negative numbers they are less than 0.
+3. TypeError: '>' not supported between instances of 'str' and 'int
+   because we compare the array values to max and it is an error
+   to compare int to str
+4. [0, 1, 1] since it is an legal input.
+5. empty set ([]) since 0 has no prime factors
+6. [[0, 2], [0, 2], [0, 2], [0, 2], [1, 1], [1, 1], [1, 1]]
+   it will return every pair a number of times since in the function
+   itself we assumed that all the numbers appear only once,
+   if they appear more than once then every number will be displayed
+   several times.
+
+======================
+=  Special Comments  =
+======================
+
+What's up Doc?

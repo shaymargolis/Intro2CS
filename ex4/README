@@ -1,0 +1,38 @@
+shaymar
+211831136
+Shay Margolis
+
+I discussed the exercise with: .
+
+=============================
+=  README for ex4: Carrots  =
+=============================
+
+
+==================
+=  Description:  =
+==================
+
+======================
+=  Special Comments  =
+======================
+
+======================
+=   Section C - q1   =
+======================
+
+The purpose of every test case:
+1. Normal word, should expose the letter
+2. Normal word but the request is to expose
+    non existing letter, should not change
+3. Empty pattern should not change
+4. Empty pattern should expose the letters
+
+======================
+=   Section C - q2   =
+======================
+
+I wouldn't have to change any thing, because I didn't relay
+on the type of the letters or on the transformation of them
+to numbers! I used dict instead of the integer value of the word.
+yay!

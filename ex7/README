@@ -1,0 +1,49 @@
+shaymar
+211831136
+Shay Margolis
+
+I discussed the exercise with: .
+
+=============================
+=  README for ex7: Recursion  =
+=============================
+
+==================
+=  Description:  =
+==================
+
+======================
+=  Special Comments  =
+======================
+
+======================
+=  Run time analyze  =
+======================
+
+1. is_prime
+
+is_prime does command with constant time of operation O(1)
+and then runs the function has_divisor_smaller_than(), that
+runs O(n) times (from n-1 to 1), and each time does commands
+with constant time. the total running time is O(n).
+
+2. print_no_repetition_sequences
+
+Let M be number of letters, n be length of string.
+print_no_repetition_sequences uses the function
+possible_no_repetition_sequences that returns array of all
+possible sequences without repeat. in every step, it calculates
+the concat for every letter (total M letters) with the possible
+non repetition sequences.
+
+so at every step i from 1 to n we make (M-i+1) calculations.
+
+so the running time is:
+
+T(M,N) = M! / (M-n)! = O(M^n)
+
+3. flood_fill
+
+At the worst case, flood_fill will fill the entire matrix
+that is of a size NxM. that means that the function will run
+n*m times, and that the running time is O(n*m)

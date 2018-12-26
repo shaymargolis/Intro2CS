@@ -1,0 +1,66 @@
+shaymar
+211831136
+Shay Margolis
+
+I discussed the exercise with: .
+
+=============================
+=  README for ex5: Carrots  =
+=============================
+
+==================
+=  Description:  =
+==================
+
+======================
+=  Special Comments  =
+======================
+
+=========================
+=   Function spliting   =
+=========================
+
+I will write for every function what custom functions
+that I wrote are based on.
+
+check_input_args:
+    direction_valid:
+        checks if a letter is a valid directoin
+
+read_words_file + read_matrix_file:
+    read_file_lines:
+        returns array of file lines
+
+find_words_in_matrix:
+    - transform_matrix:
+        Transform matrix from specific reading direction
+        to left to right ('r' direction), using the following
+        functions, that return the value in the original matrix
+        for the new reading direction:
+        - u_right_pos
+        - l_right_pos
+        - y_right_pos
+    - find_word_in_matrix_right:
+        Find the count that word appears in matrix when the
+        reading direction is ('r')
+    - get_dims:
+        Returns the dimensions of a matix
+
+write_output_file
+
+=========================
+=         Tests         =
+=========================
+
+I decided to test the function "find_word_in_matrix_right"
+
+First test - word overlap should count as twice
+
+Second test - should not stop after None
+
+Third test - should search in all rows
+
+Fourth test - Should not search beyond the given dims
+
+Fifth test - should not start search for word
+             if the len is beyond the dims

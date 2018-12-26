@@ -1,0 +1,11 @@
+dog,1
+cat,2
+ants,4
+apple,4
+cake,2
+long,1
+short,1
+can,2
+toe,2
+poet,2
+cro,2
